@@ -1,1 +1,2 @@
-filler
+int x = 1+1
+str y = 2*2
