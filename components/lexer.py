@@ -27,9 +27,17 @@ class Lexer:
             id_match = re.compile(r'^str\s+(\w+)').match(line)
             self.tokens.append({"type":"ID", "value":id_match.group(1)})
 
+            #Captures operator flagged by an identifier
             operator_match = re.compile(r'\s*(=|\+=|\-=|\*=|/=|\*\*=|%=)').search(line, id_match.end())
-            self.tokens.append({"type":"ASSIGN", "value":operator_match.group(1)})
-            self.tokens.append({"type":"STRING", "value":line.split(" ")[3]})
+            if not operator_match:
+                self.tokens.append({"type":"ASSIGN", "value":"="})
+                self.tokens.append({"type":"STRING", "value":""})
+            else:
+                self.tokens.append({"type":"ASSIGN", "value":operator_match.group(1)})
+
+                #Captures string value
+
+                self.tokens.append({"type":"STRING", "value":re.compile(r'\s*"(.*?)"').search(line, operator_match.end()).group(1)})
 
         elif(line.startswith("int")):
             self.tokens.append({"type":"TYPE", "value":"int"})
