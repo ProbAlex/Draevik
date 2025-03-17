@@ -1,4 +1,5 @@
 import sys
+import re
 program_filepath = sys.argv[1]
 
 
@@ -15,11 +16,19 @@ class Lexer:
         with open(filepath, 'r') as file:
             return [line.strip() for line in file.readlines()]
         
-    def tokenize_line(self, line):
+    def tokenize_line(self, line) -> None:
+        if(line == "" or line.startswith("note") or line.startswith("//")):
+            pass
+        # Tokenize a single line of the program.
         if(line.startswith("str")):
             self.tokens.append({"type":"TYPE", "value":"str"})
-            self.tokens.append({"type":"ID", "value":line.split(" ")[1]})
-            self.tokens.append({"type":"ASSIGN", "value":"="})
+
+            # Matches: ^str <one-or-more-spaces> <one-or-more-word-chars> ...
+            id_match = re.compile(r'^str\s+(\w+)').match(line)
+            self.tokens.append({"type":"ID", "value":id_match.group(1)})
+
+            operator_match = re.compile(r'\s*(=|\+=|\-=|\*=|/=|\*\*=|%=)').search(line, id_match.end())
+            self.tokens.append({"type":"ASSIGN", "value":operator_match.group(1)})
             self.tokens.append({"type":"STRING", "value":line.split(" ")[3]})
 
         elif(line.startswith("int")):

@@ -1,2 +1,7 @@
+note This is a beginner friendly comment
+// This is a java style comment 
+
 int x = 1+1
-str y = 2*2
+str y = "2*2"
+float z = 3.14
+bool _ = true
